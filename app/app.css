@@ -62,6 +62,8 @@ body {
   margin: 0; background: var(--paper); color: var(--ink);
   font-family: var(--font); line-height: 1.55; letter-spacing: -0.005em;
   font-feature-settings: "tnum" 0;
+  word-break: keep-all;          /* 한글을 낱말 단위로 줄바꿈 */
+  overflow-wrap: break-word;
 }
 img { max-width: 100%; }
 a { color: var(--accent); text-decoration: none; }
