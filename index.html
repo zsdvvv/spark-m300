@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>스파크(마티즈크리에이티브) M300 정비 시스템</title>
+  <meta name="description" content="스파크(마티즈크리에이티브) M300 전용 정비 시스템 — 순정부품 가격·GM 품번, 정비지침서 조임 토크, GM 분해도를 한곳에서 찾습니다.">
+  <meta property="og:title" content="스파크(마티즈크리에이티브) M300 정비 시스템">
+  <meta property="og:description" content="M300 순정부품 가격·GM 품번·조임 토크·분해도를 한곳에서">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="app/app.css">
+  <script>
+    // 첫 화면 깜빡임 방지: 저장된 테마·글자 크기를 먼저 적용
+    try {
+      var s = JSON.parse(localStorage.getItem('spark.settings.v2') || '{}');
+      if (s.theme && s.theme !== 'auto') document.documentElement.dataset.theme = s.theme;
+      if (s.big) document.documentElement.classList.add('big');
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <a class="skip" href="#main">본문으로 건너뛰기</a>
+
+  <header class="topbar">
+    <a class="brand" href="#/find" aria-label="처음 화면">
+      <span><span class="mark">M300</span><b>스파크<br>정비 시스템</b></span>
+    </a>
+    <form class="search" role="search" id="searchForm">
+      <svg class="i i-search" aria-hidden="true"><use href="#i-search"/></svg>
+      <input id="q" type="search" autocomplete="off" spellcheck="false" enterkeyhint="search"
+             placeholder="부품 이름·품번·정비 작업 (예: 쇼바, 96416331, 휀벨트 교환)" aria-label="검색">
+      <kbd aria-hidden="true">/</kbd>
+    </form>
+    <div class="top-actions">
+      <button class="chip-btn car" id="carBtn" type="button" data-set="0">
+        <svg class="i s" aria-hidden="true"><use href="#i-car"/></svg><span class="lbl" id="carLabel">내 차 설정</span>
+      </button>
+      <button class="chip-btn" id="setBtn" type="button" aria-label="설정">
+        <svg class="i s" aria-hidden="true"><use href="#i-gear"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <nav class="rail" aria-label="주 메뉴">
+    <a href="#/find" data-view="find"><svg class="i" aria-hidden="true"><use href="#i-search"/></svg>찾기</a>
+    <a href="#/diagrams" data-view="diagrams"><svg class="i" aria-hidden="true"><use href="#i-diagram"/></svg>분해도</a>
+    <a href="#/torque" data-view="torque"><svg class="i" aria-hidden="true"><use href="#i-wrench"/></svg>조임 토크</a>
+    <a href="#/manual" data-view="manual"><svg class="i" aria-hidden="true"><use href="#i-book"/></svg>정비지침서</a>
+    <a href="#/list" data-view="list"><svg class="i" aria-hidden="true"><use href="#i-list"/></svg>작업 목록<span class="badge hidden" id="railCount">0</span></a>
+    <span class="spacer"></span>
+  </nav>
+
+  <main id="main" tabindex="-1"></main>
+
+  <footer class="site-foot">
+    <span><b>스파크(마티즈크리에이티브) M300 정비 시스템</b></span>
+    <span>문의 <a href="mailto:zsdvvv@gmail.com">zsdvvv@gmail.com</a></span>
+    <span class="faint">개인이 만든 비공식 도구입니다. GM·씨몰과 관계없으며, 가격은 수집 시점 값입니다. 중요한 체결 전에는 정비지침서 원문 토크를 꼭 확인하세요.</span>
+  </footer>
+
+  <div class="scrim" id="scrim"></div>
+  <aside class="panel" id="panel" aria-label="상세 정보" aria-hidden="true">
+    <div class="ph">
+      <button class="btn icon ghost" id="panelBack" type="button" aria-label="뒤로"><svg class="i"><use href="#i-back"/></svg></button>
+      <span class="ttl" id="panelTitle"></span>
+      <button class="btn icon ghost" id="panelClose" type="button" aria-label="닫기"><svg class="i"><use href="#i-close"/></svg></button>
+    </div>
+    <div class="pb" id="panelBody"></div>
+  </aside>
+
+  <dialog id="carDialog" aria-labelledby="carTitle">
+    <form method="dialog">
+      <div class="dh"><h2 id="carTitle">내 차 사양</h2><p>입력하면 부품마다 내 차에 맞는지 표시합니다. 차량 등록증이나 VIN 10번째 자리(연식)를 참고하세요.</p></div>
+      <div class="db" id="carBody"></div>
+      <div class="df">
+        <button class="btn ghost" value="reset" type="submit">지우기</button>
+        <button class="btn primary" value="save" type="submit">저장</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="setDialog" aria-labelledby="setTitle">
+    <form method="dialog">
+      <div class="dh"><h2 id="setTitle">설정</h2><p>이 컴퓨터(브라우저)에만 저장됩니다.</p></div>
+      <div class="db" id="setBody"></div>
+      <div class="df"><button class="btn primary" value="save" type="submit">닫기</button></div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- 아이콘 -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+    <symbol id="i-diagram" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m11 11 5 5"/><circle cx="16" cy="16" r="1.5"/><path d="M15 6h3M6 15v3"/></symbol>
+    <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.1L3.5 17.2a1.8 1.8 0 0 0 2.5 2.5l5.8-5.8a4 4 0 0 0 5.1-5.4l-2.6 2.6-2.3-.5-.5-2.3z"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/><path d="M9 7h7M9 11h5"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><path d="m3.5 6 1 1 2-2M3.5 12l1 1 2-2M3.5 18l1 1 2-2"/></symbol>
+    <symbol id="i-car" viewBox="0 0 24 24"><path d="M5 16V11l2-5h10l2 5v5"/><path d="M3 16h18v3H3z"/><circle cx="7.5" cy="16" r="1.5"/><circle cx="16.5" cy="16" r="1.5"/><path d="M5 11h14"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 18 9 12l6-6"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+    <symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h10"/></symbol>
+    <symbol id="i-cart" viewBox="0 0 24 24"><path d="M3 4h2l2.4 11.2a1 1 0 0 0 1 .8h8.9a1 1 0 0 0 1-.8L20 8H6"/><circle cx="9" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></symbol>
+    <symbol id="i-fit" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+    <symbol id="i-pdf" viewBox="0 0 24 24"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><circle cx="12" cy="10" r="3"/><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
+    <symbol id="i-print" viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4v-7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v7h-2"/><path d="M6 14h12v7H6z"/></symbol>
+  </svg>
+
+  <script>window.SPARK_PUBLIC = { fulltext: false };</script>
+  <script src="db.js"></script>
+  <script src="app/app.js"></script>
+</body>
+</html>
