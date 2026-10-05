@@ -377,7 +377,7 @@
     main.innerHTML = `<div class="wrap">
       <section class="hello">
         <h1>${APP_NAME}</h1>
-        <p class="only-m300"><span class="tag acc">M300 전용</span> 2009~2015 마티즈 크리에이티브·스파크·스파크S·스파크 EV 용입니다. 더 넥스트 스파크(M400)와는 부품이 다릅니다.</p>
+        <p class="only-m300"><span class="tag acc">M300 전용</span> 2009~2015 마티즈 크리에이티브·스파크·스파크S·스파크 EV 용입니다. 더 넥스트 스파크(M400)와는 부품이 다릅니다. <a href="https://zsdvvv.github.io/spark-m400/">M400 정비 시스템 ↗</a></p>
         <p>부품 이름이나 GM 품번을 위 칸에 입력하세요. 쇼바·미미·로아암 같은 말도 알아듣습니다. 씨몰 가격, 조임 토크, 정비지침서 쪽, 분해도 위치가 한 번에 나옵니다.</p>
       </section>
       <h2 class="sec">자주 하는 정비</h2>
